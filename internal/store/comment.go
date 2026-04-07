@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 
+	payload "github.com/eedriz99/go_blog/internal/dto/payload"
 	"github.com/eedriz99/go_blog/internal/model"
 )
 
@@ -30,7 +31,7 @@ func (c *CommentStore) Create(ctx context.Context, m *model.Comment) error {
 	return nil
 }
 
-func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]GetPostCommentsRes, error) {
+func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]model.Comment, error) {
 	query := `
 			SELECT c.id, c.post_id, c.content,c.created_at, c.updated_at, u.username 
 			FROM comments AS c
@@ -45,9 +46,9 @@ func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]GetPostC
 	}
 	defer rows.Close()
 
-	comments := []GetPostCommentsRes{}
+	comments := []model.Comment{}
 	for rows.Next() {
-		var m GetPostCommentsRes
+		var m model.Comment
 		if err := rows.Scan(
 			&m.ID,
 			&m.PostID,
@@ -68,7 +69,7 @@ func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]GetPostC
 	return comments, nil
 }
 
-func (c *CommentStore) Update(ctx context.Context, comment UpdateCommentPayload) (*model.Comment, error) {
+func (c *CommentStore) Update(ctx context.Context, comment payload.UpdateCommentPayload) (*model.Comment, error) {
 	query := `
 				UPDATE comments SET content = $1, update_at = NOW()
 				WHERE id = &2, user_id = $3 AND post_id = $4
