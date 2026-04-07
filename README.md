@@ -125,3 +125,92 @@ export DATABASE_URL="postgres://user:password@localhost:5432/go_blog?sslmode=dis
 export JWT_SECRET="your-secret-key"
 export PORT=8000
 ```
+### 3. Run database migrations
+
+```bash
+psql $DATABASE_URL -f migrations/001_create_users.sql
+psql $DATABASE_URL -f migrations/002_create_posts.sql
+psql $DATABASE_URL -f migrations/003_create_comments.sql
+```
+
+### 4. Run the server
+
+```bash
+go run ./cmd/api
+```
+
+The API will be available at `http://localhost:8080`.
+
+---
+
+## Database Schema
+
+### users
+```sql
+CREATE TABLE IF NOT EXISTS users(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    email citext NOT NULL UNIQUE,
+    username citext NOT NULL UNIQUE,
+    first_name VARCHAR(255) NOT NULL,
+    last_name VARCHAR(255) NOT NULL
+    -- password   TEXT NOT NULL,            [bcrypt hashed]
+);
+```
+
+### posts
+```sql
+CREATE TABLE IF NOT EXISTS posts(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    title TEXT NOT NULL,
+    content TEXT NOT NULL,
+    user_id UUID NOT NULL REFERENCES users(id),
+    tags VARCHAR(20) ARRAY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+```
+
+### comments
+```sql
+CREATE TABLE IF NOT EXISTS comments(
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    content TEXT NOT NULL,
+    user_id UUID NOT NULL REFERENCES users(id),
+    post_id UUID NOT NULL REFERENCES posts(id),
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+```
+
+---
+
+## Key Learnings Captured
+
+These are patterns and pitfalls deliberately worked through during development — the real point of the project.
+
+**Go / SQL:**
+- `&field` for `Scan()` destinations, plain values for query arguments — pointer vs. value distinction with `database/sql`
+- Circular imports within a package are resolved by removing redundant package prefixes
+- `pq.Array()` wrapper needed for scanning PostgreSQL `TEXT[]` into Go `[]string`
+
+**Architecture:**
+- `UserID` belongs in auth middleware context (`r.Context().Value(...)`), never in the request body — avoids user impersonation
+- DTOs should be distinct from DB models: `response.CommentResponse` ≠ `model.Comment` ≠ `payload.CreateCommentPayload`
+- Keep handler, store, and model layers cleanly separated — handlers orchestrate, stores query, models represent DB shape
+
+**HTTP / Chi:**
+- `chi.URLParam(r, "postID")` for path parameters; always validate and convert early in handlers
+
+---
+
+## Completed ✅
+
+- [x] Project scaffolding — `cmd/api`, `internal/` package layout
+- [x] PostgreSQL connection setup with `database/sql` + `lib/pq`
+- [x] Posts CRUD — create, read, list, update, delete
+- [x] Comments system — route structure, handlers, store layer, DTO separation
+- [x] `dto` package — `CommentResponse` and related types separate from DB models
+- [x] Proper `database/sql` usage — `&field` for Scan, values for args
+- [x] Error handling — `sql.ErrNoRows` detection, appropriate HTTP status codes
+
+---
