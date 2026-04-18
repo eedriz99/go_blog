@@ -3,6 +3,7 @@ package dto
 import (
 	"time"
 
+	"github.com/eedriz99/go_blog/internal/model"
 	"github.com/eedriz99/go_blog/internal/store"
 )
 
@@ -41,4 +42,14 @@ func NewCommentListResponse(models []store.CommentWithUsername) CommentListRespo
 		res.Comments[i] = NewCommentResponse(&models[i])
 	}
 	return res
+}
+
+func NewCommentWithoutUsernameResponse(model *model.Comment) CommentResponse {
+	return CommentResponse{
+		ID:        model.ID,
+		PostID:    model.PostID,
+		Content:   model.Content,
+		CreatedAt: model.CreatedAt.Format(time.RFC3339),
+		UpdatedAt: model.UpdatedAt.Format(time.RFC3339),
+	}
 }

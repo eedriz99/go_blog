@@ -71,16 +71,16 @@ func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]CommentW
 
 func (c *CommentStore) Update(ctx context.Context, comment payload.UpdateCommentPayload) (*model.Comment, error) {
 	query := `
-				UPDATE comments SET content = $1, update_at = NOW()
-				WHERE id = &2, user_id = $3 AND post_id = $4
-				RETURNING id, content, user_id, post_id, created_at, update_at;
+				UPDATE comments SET content = $1, updated_at = NOW()
+				WHERE id = $2 AND user_id = $3
+				RETURNING id, content, user_id, post_id, created_at, updated_at;
 	`
 	var m model.Comment
 	err := c.db.QueryRowContext(ctx, query,
 		&comment.Content,
 		&comment.ID,
 		&comment.UserID,
-		&comment.PostID,
+		// &comment.PostID,
 	).Scan(&m.ID,
 		&m.Content,
 		&m.UserID,
@@ -89,13 +89,25 @@ func (c *CommentStore) Update(ctx context.Context, comment payload.UpdateComment
 		&m.UpdatedAt)
 
 	if err != nil {
-		return nil, ErrorInternal
+		return nil, err
 	}
 	return &m, nil
 }
 
-func (c *CommentStore) Delete(ctx context.Context, id string) error {
-	return nil
+func (c *CommentStore) Delete(ctx context.Context, payload payload.DeleteCommentPayload) error {
+	query := `DELETE FROM comments WHERE id = $1 AND user_id = $2;`
+	result, err := c.db.ExecContext(ctx, query, payload.ID, payload.UserID)
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return ErrorNotFound
+	}
+
+	return err
 }
 
 func (c *CommentStore) GetByUser(ctx context.Context, userID string) ([]model.Comment, error) {
