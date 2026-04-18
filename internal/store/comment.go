@@ -31,7 +31,7 @@ func (c *CommentStore) Create(ctx context.Context, m *model.Comment) error {
 	return nil
 }
 
-func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]model.Comment, error) {
+func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]CommentWithUsername, error) {
 	query := `
 			SELECT c.id, c.post_id, c.content,c.created_at, c.updated_at, u.username 
 			FROM comments AS c
@@ -46,9 +46,9 @@ func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]model.Co
 	}
 	defer rows.Close()
 
-	comments := []model.Comment{}
+	comments := []CommentWithUsername{}
 	for rows.Next() {
-		var m model.Comment
+		var m CommentWithUsername // use the mediator struct to include username
 		if err := rows.Scan(
 			&m.ID,
 			&m.PostID,
@@ -98,9 +98,13 @@ func (c *CommentStore) Delete(ctx context.Context, id string) error {
 	return nil
 }
 
+func (c *CommentStore) GetByUser(ctx context.Context, userID string) ([]model.Comment, error) {
+	return nil, nil
+}
+
 // # Context-aware access (primary path)
-// GET  /posts/{post_id}/comments/       # comments for this post
-// POST /posts/{post_id}/comments/       # create (post_id inferred from URL)
+// GET  /posts/{post_id}/comments/       # comments for this post  -- Done
+// POST /posts/{post_id}/comments/       # create (post_id inferred from URL) -- Done
 
 // # Cross-cutting access (secondary path)
 // GET  /comments/{id}/                  # direct access by ID

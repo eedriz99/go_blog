@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"github.com/eedriz99/go_blog/internal/model"
+	"github.com/eedriz99/go_blog/internal/store"
 )
 
 type CommentResponse struct {
@@ -20,7 +20,7 @@ type CommentListResponse struct {
 	Total    int               `json:"total"`
 }
 
-func NewCommentResponse(model *model.Comment) CommentResponse {
+func NewCommentResponse(model *store.CommentWithUsername) CommentResponse {
 	return CommentResponse{
 		ID:        model.ID,
 		PostID:    model.PostID,
@@ -31,7 +31,7 @@ func NewCommentResponse(model *model.Comment) CommentResponse {
 	}
 }
 
-func NewCommentListResponse(models []model.Comment) CommentListResponse {
+func NewCommentListResponse(models []store.CommentWithUsername) CommentListResponse {
 	res := CommentListResponse{
 		Comments: make([]CommentResponse, len(models)),
 		Total:    len(models),

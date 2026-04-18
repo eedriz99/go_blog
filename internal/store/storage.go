@@ -45,7 +45,7 @@ type Storage struct {
 
 	Comments interface {
 		Create(context.Context, *model.Comment) error
-		GetByPost(ctx context.Context, postID string) ([]model.Comment, error)
+		GetByPost(ctx context.Context, postID string) ([]CommentWithUsername, error)
 		Update(context.Context, payload.UpdateCommentPayload) (*model.Comment, error)
 		Delete(context.Context, string) error
 	}
