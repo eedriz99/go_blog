@@ -98,7 +98,8 @@ go_blog/
 |--------|------|-------------|:---:|
 | `GET` | `/api/v1/posts/{postID}/comments` | Get comments for a post | ✗ |
 | `POST` | `/api/v1/posts/{postID}/comments` | Add a comment to a post | ✓ |
-| `DELETE` | `/api/v1/posts/{postID}/comments/{commentID}` | Delete a comment | ✓ (owner) |
+| `PUT` | `/api/v1/comments/{commentID}` | Update a comment | ✓ (owner) |
+| `DELETE` | `/api/v1/comments/{commentID}` | Delete a comment | ✓ (owner) |
 
 
 
