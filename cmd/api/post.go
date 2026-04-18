@@ -14,7 +14,7 @@ import (
 
 func (app *application) getPostsHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
-	postID := chi.URLParam(r, "post_id")
+	postID := chi.URLParam(r, "postID")
 
 	m, err := app.store.Posts.GetByID(ctx, postID)
 	if err != nil {
@@ -103,7 +103,7 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 
 	payload := payload.DeletePostPayload{
-		ID:     chi.URLParam(r, "post_id"),
+		ID:     chi.URLParam(r, "postID"),
 		UserID: "cdf8c7d8-913c-4300-abee-b2165c541176", // placeholder value
 	}
 

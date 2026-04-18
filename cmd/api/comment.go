@@ -11,7 +11,7 @@ import (
 )
 
 func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "post_id")
+	postId := chi.URLParam(r, "postID")
 
 	var payload payload.CreateCommentPayload
 	if err := readJson(w, r, &payload); err != nil {
@@ -42,7 +42,7 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 }
 
 func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "post_id")
+	postId := chi.URLParam(r, "postID")
 	ctx := r.Context()
 
 	comments, err := app.store.Comments.GetByPost(ctx, postId)
@@ -62,7 +62,7 @@ func (app *application) updateCommentHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	payload.ID = chi.URLParam(r, "comment_id")
+	payload.ID = chi.URLParam(r, "commentID")
 	payload.UserID = "cdf8c7d8-913c-4300-abee-b2165c541176" // place holder. Get it from ctx
 
 	ctx := r.Context()
@@ -80,7 +80,7 @@ func (app *application) deleteCommentHandler(w http.ResponseWriter, r *http.Requ
 	var payload payload.DeleteCommentPayload
 	ctx := r.Context()
 
-	payload.ID = chi.URLParam(r, "comment_id")
+	payload.ID = chi.URLParam(r, "commentID")
 	payload.UserID = "cdf8c7d8-913c-4300-abee-b2165c541176" // place holder. Get it from ctx
 	log.Printf("Delete Payload: %v", payload)
 
