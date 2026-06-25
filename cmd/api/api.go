@@ -35,6 +35,12 @@ func (app *application) mount() http.Handler {
 
 	r.Get("/swagger/*", httpSwagger.Handler(
 		httpSwagger.URL("http://localhost:8000/swagger/doc.json"),
+		httpSwagger.UIConfig(map[string]string{
+			"operationsSorter": `(a, b) => {
+				const order = { 'get': 1, 'post': 2, 'patch': 3, 'put': 3, 'delete': 4 };
+				return (order[a.get('method')] || 5) - (order[b.get('method')] || 5);
+			}`,
+		}),
 	))
 
 	r.Route("/v1", func(r chi.Router) {
