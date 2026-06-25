@@ -19,7 +19,7 @@ const docTemplate = `{
     "paths": {
         "/comments/{commentID}": {
             "put": {
-                "description": "Updates the content of a comment",
+                "description": "Update the content of a comment",
                 "consumes": [
                     "application/json"
                 ],
@@ -29,7 +29,7 @@ const docTemplate = `{
                 "tags": [
                     "comments"
                 ],
-                "summary": "Update a comment",
+                "summary": "Update comment",
                 "parameters": [
                     {
                         "type": "string",
@@ -76,14 +76,14 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes a comment by ID",
+                "description": "Delete a comment by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "comments"
                 ],
-                "summary": "Delete a comment",
+                "summary": "Delete comment",
                 "parameters": [
                     {
                         "type": "string",
@@ -120,7 +120,7 @@ const docTemplate = `{
         },
         "/health": {
             "get": {
-                "description": "Returns API status, environment and version",
+                "description": "Read API status, environment and version",
                 "produces": [
                     "application/json"
                 ],
@@ -143,14 +143,14 @@ const docTemplate = `{
         },
         "/posts": {
             "get": {
-                "description": "Returns all blog posts",
+                "description": "Read all blog posts",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "posts"
                 ],
-                "summary": "List all posts",
+                "summary": "Read all posts",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -173,7 +173,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Creates a new blog post",
+                "description": "Create a new blog post",
                 "consumes": [
                     "application/json"
                 ],
@@ -183,7 +183,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "Create a post",
+                "summary": "Create post",
                 "parameters": [
                     {
                         "description": "Post payload",
@@ -225,14 +225,14 @@ const docTemplate = `{
         },
         "/posts/{postID}": {
             "get": {
-                "description": "Returns a post and all its comments",
+                "description": "Read a post and all its comments",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "posts"
                 ],
-                "summary": "Get post with comments",
+                "summary": "Read post with comments",
                 "parameters": [
                     {
                         "type": "string",
@@ -270,14 +270,14 @@ const docTemplate = `{
                 }
             },
             "delete": {
-                "description": "Deletes a post by ID",
+                "description": "Delete a post by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "posts"
                 ],
-                "summary": "Delete a post",
+                "summary": "Delete post",
                 "parameters": [
                     {
                         "type": "string",
@@ -318,7 +318,7 @@ const docTemplate = `{
                 }
             },
             "patch": {
-                "description": "Updates title, content, or tags of an existing post",
+                "description": "Update title, content, or tags of an existing post",
                 "consumes": [
                     "application/json"
                 ],
@@ -328,7 +328,7 @@ const docTemplate = `{
                 "tags": [
                     "posts"
                 ],
-                "summary": "Update a post",
+                "summary": "Update post",
                 "parameters": [
                     {
                         "type": "string",
@@ -377,14 +377,14 @@ const docTemplate = `{
         },
         "/posts/{postID}/comments": {
             "get": {
-                "description": "Returns all comments for a given post",
+                "description": "Read all comments for a given post",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "comments"
                 ],
-                "summary": "Get comments for a post",
+                "summary": "Read comments for a post",
                 "parameters": [
                     {
                         "type": "string",
@@ -416,7 +416,7 @@ const docTemplate = `{
                 }
             },
             "post": {
-                "description": "Adds a comment to a post",
+                "description": "Create a comment on a post",
                 "consumes": [
                     "application/json"
                 ],
@@ -426,7 +426,7 @@ const docTemplate = `{
                 "tags": [
                     "comments"
                 ],
-                "summary": "Create a comment",
+                "summary": "Create comment",
                 "parameters": [
                     {
                         "type": "string",
@@ -475,14 +475,14 @@ const docTemplate = `{
         },
         "/users/{userID}": {
             "get": {
-                "description": "Returns a user by ID",
+                "description": "Read a user by ID",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Get a user",
+                "summary": "Read user",
                 "parameters": [
                     {
                         "type": "string",
@@ -522,14 +522,14 @@ const docTemplate = `{
         },
         "/users/{userID}/posts": {
             "get": {
-                "description": "Returns all posts belonging to a specific user",
+                "description": "Read all posts belonging to a specific user",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "users"
                 ],
-                "summary": "Get posts by user",
+                "summary": "Read posts by user",
                 "parameters": [
                     {
                         "type": "string",

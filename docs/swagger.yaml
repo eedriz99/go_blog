@@ -134,7 +134,7 @@ info:
 paths:
   /comments/{commentID}:
     delete:
-      description: Deletes a comment by ID
+      description: Delete a comment by ID
       parameters:
       - description: Comment ID
         in: path
@@ -158,13 +158,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Delete a comment
+      summary: Delete comment
       tags:
       - comments
     put:
       consumes:
       - application/json
-      description: Updates the content of a comment
+      description: Update the content of a comment
       parameters:
       - description: Comment ID
         in: path
@@ -196,12 +196,12 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Update a comment
+      summary: Update comment
       tags:
       - comments
   /health:
     get:
-      description: Returns API status, environment and version
+      description: Read API status, environment and version
       produces:
       - application/json
       responses:
@@ -216,7 +216,7 @@ paths:
       - health
   /posts:
     get:
-      description: Returns all blog posts
+      description: Read all blog posts
       produces:
       - application/json
       responses:
@@ -232,13 +232,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: List all posts
+      summary: Read all posts
       tags:
       - posts
     post:
       consumes:
       - application/json
-      description: Creates a new blog post
+      description: Create a new blog post
       parameters:
       - description: Post payload
         in: body
@@ -265,12 +265,12 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Create a post
+      summary: Create post
       tags:
       - posts
   /posts/{postID}:
     delete:
-      description: Deletes a post by ID
+      description: Delete a post by ID
       parameters:
       - description: Post ID
         in: path
@@ -298,11 +298,11 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Delete a post
+      summary: Delete post
       tags:
       - posts
     get:
-      description: Returns a post and all its comments
+      description: Read a post and all its comments
       parameters:
       - description: Post ID
         in: path
@@ -328,13 +328,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get post with comments
+      summary: Read post with comments
       tags:
       - posts
     patch:
       consumes:
       - application/json
-      description: Updates title, content, or tags of an existing post
+      description: Update title, content, or tags of an existing post
       parameters:
       - description: Post ID
         in: path
@@ -366,12 +366,12 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Update a post
+      summary: Update post
       tags:
       - posts
   /posts/{postID}/comments:
     get:
-      description: Returns all comments for a given post
+      description: Read all comments for a given post
       parameters:
       - description: Post ID
         in: path
@@ -393,13 +393,13 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get comments for a post
+      summary: Read comments for a post
       tags:
       - comments
     post:
       consumes:
       - application/json
-      description: Adds a comment to a post
+      description: Create a comment on a post
       parameters:
       - description: Post ID
         in: path
@@ -431,12 +431,12 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Create a comment
+      summary: Create comment
       tags:
       - comments
   /users/{userID}:
     get:
-      description: Returns a user by ID
+      description: Read a user by ID
       parameters:
       - description: User ID
         in: path
@@ -462,12 +462,12 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get a user
+      summary: Read user
       tags:
       - users
   /users/{userID}/posts:
     get:
-      description: Returns all posts belonging to a specific user
+      description: Read all posts belonging to a specific user
       parameters:
       - description: User ID
         in: path
@@ -487,7 +487,7 @@ paths:
             additionalProperties:
               type: string
             type: object
-      summary: Get posts by user
+      summary: Read posts by user
       tags:
       - users
 swagger: "2.0"
