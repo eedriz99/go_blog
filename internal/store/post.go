@@ -71,6 +71,45 @@ func (p *PostStore) GetByID(ctx context.Context, payload string) (*model.Post, e
 	return &m, nil
 }
 
+func (p *PostStore) GetByUserID(ctx context.Context, userID string) ([]model.Post, error) {
+	query := `
+				SELECT id, title, content, tags, created_at, updated_at 
+				FROM posts 
+				WHERE user_id = $1
+				ORDER BY updated_at DESC;
+				`
+	posts := []model.Post{}
+
+	rows, err := p.db.QueryContext(ctx, query, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var m model.Post
+		if err := rows.Scan(
+			&m.ID,
+			&m.Title,
+			&m.Content,
+			pq.Array(&m.Tags),
+			&m.CreatedAt,
+			&m.UpdatedAt,
+		); err != nil {
+			return nil, err
+		}
+
+		posts = append(posts, m)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
 func (p *PostStore) GetAll(ctx context.Context) ([]model.Post, error) {
 	query := `
 				SELECT id, title, content, tags, created_at, updated_at 

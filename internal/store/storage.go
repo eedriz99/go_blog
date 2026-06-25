@@ -31,6 +31,7 @@ type Storage struct {
 	Posts interface {
 		Create(context.Context, *model.Post) error
 		GetByID(context.Context, string) (*model.Post, error)
+		GetByUserID(context.Context, string) ([]model.Post, error)
 		GetAll(context.Context) ([]model.Post, error)
 		Update(context.Context, payload.UpdatePostPayload) (*model.Post, error)
 		Delete(context.Context, string) error

@@ -30,8 +30,26 @@ func (u *UserStore) Create(ctx context.Context, m *model.User) error {
 	return nil
 }
 
-func (u *UserStore) GetByID(ctx context.Context, payload string) (*model.User, error) {
-	return nil, nil
+func (u *UserStore) GetByID(ctx context.Context, id string) (*model.User, error) {
+	query := `SELECT id, email, first_name, last_name, username FROM users WHERE id = $1`
+
+	var m model.User
+	err := u.db.QueryRowContext(ctx, query, id).Scan(
+		&m.ID,
+		&m.Email,
+		&m.FirstName,
+		&m.LastName,
+		&m.Username,
+	)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			return nil, ErrorNotFound
+		default:
+			return nil, err
+		}
+	}
+	return &m, nil
 }
 
 func (u *UserStore) Update(ctx context.Context, m *model.User) error {
