@@ -13,13 +13,14 @@ type UserStore struct {
 }
 
 func (u *UserStore) Create(ctx context.Context, m *model.User) error {
-	query := `INSERT INTO users (email, first_name, last_name, username) VALUES ($1, $2, $3) RETURNING id`
+	query := `INSERT INTO users (email, first_name, last_name, username, password) VALUES ($1, $2, $3, $4, $5) RETURNING id`
 
 	err := u.db.QueryRowContext(ctx, query,
 		m.Email,
 		m.FirstName,
 		m.LastName,
 		m.Username,
+		m.Password,
 	).Scan(
 		&m.ID,
 	)

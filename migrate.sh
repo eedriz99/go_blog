@@ -67,4 +67,6 @@ case "$COMMAND" in
   *)
     echo "Usage: ./migrate.sh [create|up|down|status] [name|steps]"
     ;;
+
+    
 esac

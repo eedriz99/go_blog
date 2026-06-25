@@ -75,12 +75,11 @@ func (p *PostStore) GetAll(ctx context.Context, payload string) ([]model.Post, e
 	query := `
 				SELECT id, title, content, tags, created_at, updated_at 
 				FROM posts 
-				WHERE user_id=$1 
 				ORDER BY updated_at DESC;
 				`
 	posts := []model.Post{}
 
-	rows, err := p.db.QueryContext(ctx, query, payload)
+	rows, err := p.db.QueryContext(ctx, query)
 
 	if err != nil {
 		return nil, err
