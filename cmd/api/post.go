@@ -5,8 +5,8 @@ import (
 	"errors"
 	"net/http"
 
-	payload "github.com/eedriz99/go_blog/internal/dto/payload"
-	response "github.com/eedriz99/go_blog/internal/dto/response"
+	"github.com/eedriz99/go_blog/internal/dto/payload"
+	"github.com/eedriz99/go_blog/internal/dto/response"
 	"github.com/eedriz99/go_blog/internal/model"
 	"github.com/eedriz99/go_blog/internal/store"
 )
@@ -15,6 +15,14 @@ type postKey string
 
 const postContextKey postKey = "post"
 
+// @Summary     Get a post
+// @Description Returns a single post from context
+// @Tags        posts
+// @Produce     json
+// @Param       postID path string true "Post ID"
+// @Success     200 {object} response.PostResponse
+// @Failure     404 {object} map[string]string
+// @Router      /posts/{postID} [get]
 func (app *application) getPostsHandler(w http.ResponseWriter, r *http.Request) {
 	postCtx := getpostFromContext(r)
 	res := response.NewPostResponse(postCtx)
@@ -26,6 +34,16 @@ func (app *application) getPostsHandler(w http.ResponseWriter, r *http.Request) 
 
 }
 
+// @Summary     Create a post
+// @Description Creates a new blog post
+// @Tags        posts
+// @Accept      json
+// @Produce     json
+// @Param       payload body payload.CreatePostPayload true "Post payload"
+// @Success     201 {object} response.PostResponse
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /posts [post]
 func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request) {
 
 	var payload payload.CreatePostPayload
@@ -54,13 +72,18 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
+// @Summary     List all posts
+// @Description Returns all blog posts
+// @Tags        posts
+// @Produce     json
+// @Success     200 {array}  response.PostResponse
+// @Failure     500 {object} map[string]string
+// @Router      /posts [get]
 func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Request) {
-
-	UserID := "cdf8c7d8-913c-4300-abee-b2165c541176" // placeholder value should be taken from context
 
 	ctx := r.Context()
 
-	posts, err := app.store.Posts.GetAll(ctx, UserID)
+	posts, err := app.store.Posts.GetAll(ctx)
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -76,6 +99,17 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 	writeJson(w, http.StatusOK, response)
 }
 
+// @Summary     Update a post
+// @Description Updates title, content, or tags of an existing post
+// @Tags        posts
+// @Accept      json
+// @Produce     json
+// @Param       postID  path   string                    true "Post ID"
+// @Param       payload body   payload.UpdatePostPayload     true "Update payload"
+// @Success     200 {object} response.PostResponse
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /posts/{postID} [patch]
 func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request) {
 	var payload payload.UpdatePostPayload
 	ctx := r.Context()
@@ -96,6 +130,15 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 	writeJson(w, http.StatusOK, response.NewPostResponse(post))
 }
 
+// @Summary     Delete a post
+// @Description Deletes a post by ID
+// @Tags        posts
+// @Produce     json
+// @Param       postID path string true "Post ID"
+// @Success     200 {object} map[string]string
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /posts/{postID} [delete]
 func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
@@ -117,6 +160,15 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 	writeJson(w, http.StatusOK, []any{})
 }
 
+// @Summary     Get post with comments
+// @Description Returns a post and all its comments
+// @Tags        posts
+// @Produce     json
+// @Param       postID path string true "Post ID"
+// @Success     200 {object} response.PostWithCommentsResponse
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /posts/{postID} [get]
 func (app *application) getPostWithCommentsHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	post := getpostFromContext(r)

@@ -4,6 +4,7 @@ import (
 	"log"
 	"time"
 
+	_ "github.com/eedriz99/go_blog/docs"
 	"github.com/eedriz99/go_blog/internal/db"
 	"github.com/eedriz99/go_blog/internal/env"
 	"github.com/eedriz99/go_blog/internal/store"
@@ -11,6 +12,12 @@ import (
 
 const version = "0.0.1"
 
+// @title           Go Blog API
+// @version         1.0
+// @description     A blog REST API with posts, comments, and users.
+// @contact.name    eedriz99
+// @host            localhost:8000
+// @BasePath        /v1
 func main() {
 	cfg := config{
 		addr: env.GetString("PORT", ":8000"),

@@ -1,4 +1,4 @@
-package dto
+package payload
 
 type CreatePostPayload struct {
 	UerID   string   `json:"user_id"`

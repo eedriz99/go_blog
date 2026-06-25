@@ -4,12 +4,23 @@ import (
 	"log"
 	"net/http"
 
-	payload "github.com/eedriz99/go_blog/internal/dto/payload"
-	response "github.com/eedriz99/go_blog/internal/dto/response"
+	"github.com/eedriz99/go_blog/internal/dto/payload"
+	"github.com/eedriz99/go_blog/internal/dto/response"
 	"github.com/eedriz99/go_blog/internal/model"
 	"github.com/go-chi/chi/v5"
 )
 
+// @Summary     Create a comment
+// @Description Adds a comment to a post
+// @Tags        comments
+// @Accept      json
+// @Produce     json
+// @Param       postID  path   string                      true "Post ID"
+// @Param       payload body   payload.CreateCommentPayload    true "Comment payload"
+// @Success     201 {object} response.CommentResponse
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /posts/{postID}/comments [post]
 func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Request) {
 	postId := chi.URLParam(r, "postID")
 
@@ -41,6 +52,14 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
+// @Summary     Get comments for a post
+// @Description Returns all comments for a given post
+// @Tags        comments
+// @Produce     json
+// @Param       postID path string true "Post ID"
+// @Success     200 {array}  response.CommentResponse
+// @Failure     500 {object} map[string]string
+// @Router      /posts/{postID}/comments [get]
 func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.Request) {
 	postId := chi.URLParam(r, "postID")
 	ctx := r.Context()
@@ -55,6 +74,17 @@ func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.
 	writeJson(w, http.StatusOK, res)
 }
 
+// @Summary     Update a comment
+// @Description Updates the content of a comment
+// @Tags        comments
+// @Accept      json
+// @Produce     json
+// @Param       commentID path   string                      true "Comment ID"
+// @Param       payload   body   payload.UpdateCommentPayload    true "Update payload"
+// @Success     200 {object} response.CommentResponse
+// @Failure     400 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /comments/{commentID} [put]
 func (app *application) updateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	var payload payload.UpdateCommentPayload
 	if err := readJson(w, r, &payload); err != nil {
@@ -76,6 +106,15 @@ func (app *application) updateCommentHandler(w http.ResponseWriter, r *http.Requ
 	writeJson(w, http.StatusOK, res)
 }
 
+// @Summary     Delete a comment
+// @Description Deletes a comment by ID
+// @Tags        comments
+// @Produce     json
+// @Param       commentID path string true "Comment ID"
+// @Success     204
+// @Failure     404 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /comments/{commentID} [delete]
 func (app *application) deleteCommentHandler(w http.ResponseWriter, r *http.Request) {
 	var payload payload.DeleteCommentPayload
 	ctx := r.Context()

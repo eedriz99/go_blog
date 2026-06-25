@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 
-	payload "github.com/eedriz99/go_blog/internal/dto/payload"
+	"github.com/eedriz99/go_blog/internal/dto/payload"
 	"github.com/eedriz99/go_blog/internal/model"
 )
 
@@ -31,7 +31,7 @@ type Storage struct {
 	Posts interface {
 		Create(context.Context, *model.Post) error
 		GetByID(context.Context, string) (*model.Post, error)
-		GetAll(context.Context, string) ([]model.Post, error)
+		GetAll(context.Context) ([]model.Post, error)
 		Update(context.Context, payload.UpdatePostPayload) (*model.Post, error)
 		Delete(context.Context, string) error
 	}

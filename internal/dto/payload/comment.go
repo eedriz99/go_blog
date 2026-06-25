@@ -1,4 +1,4 @@
-package dto
+package payload
 
 type CreateCommentPayload struct {
 	Content string `json:"content"`

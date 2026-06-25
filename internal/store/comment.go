@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	payload "github.com/eedriz99/go_blog/internal/dto/payload"
+	"github.com/eedriz99/go_blog/internal/dto/payload"
 	"github.com/eedriz99/go_blog/internal/model"
 )
 

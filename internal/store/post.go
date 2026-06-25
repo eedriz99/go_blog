@@ -8,7 +8,7 @@ import (
 	"log"
 	"strings"
 
-	payload "github.com/eedriz99/go_blog/internal/dto/payload"
+	"github.com/eedriz99/go_blog/internal/dto/payload"
 	"github.com/eedriz99/go_blog/internal/model"
 	"github.com/lib/pq"
 )
@@ -71,7 +71,7 @@ func (p *PostStore) GetByID(ctx context.Context, payload string) (*model.Post, e
 	return &m, nil
 }
 
-func (p *PostStore) GetAll(ctx context.Context, payload string) ([]model.Post, error) {
+func (p *PostStore) GetAll(ctx context.Context) ([]model.Post, error) {
 	query := `
 				SELECT id, title, content, tags, created_at, updated_at 
 				FROM posts 

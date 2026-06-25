@@ -1,0 +1,419 @@
+basePath: /v1
+definitions:
+  payload.CreateCommentPayload:
+    properties:
+      content:
+        type: string
+      post_id:
+        type: string
+    type: object
+  payload.CreatePostPayload:
+    properties:
+      content:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  payload.UpdateCommentPayload:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      user_id:
+        description: PostID  string `json:"post_id"`
+        type: string
+    type: object
+  payload.UpdatePostPayload:
+    properties:
+      content:
+        type: string
+      id:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+    type: object
+  response.CommentListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/response.CommentResponse'
+        type: array
+      total:
+        type: integer
+    type: object
+  response.CommentResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      post_id:
+        type: string
+      updated_at:
+        type: string
+      username:
+        description: optional field for response
+        type: string
+    type: object
+  response.PostResponse:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  response.PostWithCommentsResponse:
+    properties:
+      comments:
+        allOf:
+        - $ref: '#/definitions/response.CommentListResponse'
+        description: include comments in the response
+      content:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      title:
+        type: string
+      updated_at:
+        type: string
+    type: object
+host: localhost:8000
+info:
+  contact:
+    name: eedriz99
+  description: A blog REST API with posts, comments, and users.
+  title: Go Blog API
+  version: "1.0"
+paths:
+  /comments/{commentID}:
+    delete:
+      description: Deletes a comment by ID
+      parameters:
+      - description: Comment ID
+        in: path
+        name: commentID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a comment
+      tags:
+      - comments
+    put:
+      consumes:
+      - application/json
+      description: Updates the content of a comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: commentID
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.UpdateCommentPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a comment
+      tags:
+      - comments
+  /health:
+    get:
+      description: Returns API status, environment and version
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /posts:
+    get:
+      description: Returns all blog posts
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.PostResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: List all posts
+      tags:
+      - posts
+    post:
+      consumes:
+      - application/json
+      description: Creates a new blog post
+      parameters:
+      - description: Post payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.CreatePostPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a post
+      tags:
+      - posts
+  /posts/{postID}:
+    delete:
+      description: Deletes a post by ID
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a post
+      tags:
+      - posts
+    get:
+      description: Returns a post and all its comments
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.PostWithCommentsResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get post with comments
+      tags:
+      - posts
+    patch:
+      consumes:
+      - application/json
+      description: Updates title, content, or tags of an existing post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      - description: Update payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.UpdatePostPayload'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.PostResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update a post
+      tags:
+      - posts
+  /posts/{postID}/comments:
+    get:
+      description: Returns all comments for a given post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/response.CommentResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get comments for a post
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: Adds a comment to a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: postID
+        required: true
+        type: string
+      - description: Comment payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/payload.CreateCommentPayload'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/response.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Create a comment
+      tags:
+      - comments
+swagger: "2.0"
