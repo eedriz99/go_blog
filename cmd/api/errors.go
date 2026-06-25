@@ -6,16 +6,16 @@ import (
 )
 
 func (app *application) InternalServerError(w http.ResponseWriter, r *http.Request, err error) {
-	log.Println("Internal server error: ", err.Error())
+	log.Println("ERROR: ", err.Error())
 	writeError(w, http.StatusInternalServerError, "Internal server error")
 }
 
 func (app *application) BadRequestError(w http.ResponseWriter, r *http.Request, err error) {
-	log.Println("Bad Request Error: ", err.Error())
-	writeError(w, http.StatusBadRequest, "Error Bad Request")
+	log.Println("ERROR: ", err.Error())
+	writeError(w, http.StatusBadRequest, "Bad Request")
 }
 
-// func (app *application) ResourceNotFoundError(w http.ResponseWriter, r *http.Request, err error) {
-// 	// log.Printf()
-// 	// writeError(w, http.Stat)
-// }
+func (app *application) ResourceNotFoundError(w http.ResponseWriter, r *http.Request, err error) {
+	log.Printf("ERROR: %v", err.Error())
+	writeError(w, http.StatusNotFound, "Resource not found")
+}

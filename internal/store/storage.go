@@ -33,7 +33,7 @@ type Storage struct {
 		GetByID(context.Context, string) (*model.Post, error)
 		GetAll(context.Context, string) ([]model.Post, error)
 		Update(context.Context, payload.UpdatePostPayload) (*model.Post, error)
-		Delete(context.Context, payload.DeletePostPayload) error
+		Delete(context.Context, string) error
 	}
 
 	Users interface {
@@ -45,7 +45,7 @@ type Storage struct {
 
 	Comments interface {
 		Create(context.Context, *model.Comment) error
-		GetByPost(ctx context.Context, postID string) ([]CommentWithUsername, error)
+		GetByPostID(ctx context.Context, postID string) ([]CommentWithUsername, error)
 		Update(context.Context, payload.UpdateCommentPayload) (*model.Comment, error)
 		Delete(context.Context, payload.DeleteCommentPayload) error
 		GetByUser(context.Context, string) ([]model.Comment, error)

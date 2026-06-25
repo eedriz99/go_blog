@@ -31,7 +31,7 @@ func (c *CommentStore) Create(ctx context.Context, m *model.Comment) error {
 	return nil
 }
 
-func (c *CommentStore) GetByPost(ctx context.Context, postID string) ([]CommentWithUsername, error) {
+func (c *CommentStore) GetByPostID(ctx context.Context, postID string) ([]CommentWithUsername, error) {
 	query := `
 			SELECT c.id, c.post_id, c.content,c.created_at, c.updated_at, u.username 
 			FROM comments AS c

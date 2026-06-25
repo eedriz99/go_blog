@@ -45,7 +45,7 @@ func (p *PostStore) Create(ctx context.Context, m *model.Post) error {
 
 func (p *PostStore) GetByID(ctx context.Context, payload string) (*model.Post, error) {
 	query := `
-				SELECT id, title, content, tags, updated_at 
+				SELECT id, title, content, tags,created_at, updated_at 
 				FROM posts 
 				WHERE id = $1;
 				`
@@ -56,6 +56,7 @@ func (p *PostStore) GetByID(ctx context.Context, payload string) (*model.Post, e
 		&m.Title,
 		&m.Content,
 		pq.Array(&m.Tags),
+		&m.CreatedAt,
 		&m.UpdatedAt)
 
 	if err != nil {
@@ -118,8 +119,6 @@ func (p *PostStore) Update(ctx context.Context, payload payload.UpdatePostPayloa
 
 	var m model.Post
 
-	m.UserID = ""
-
 	if payload.Title != nil {
 		setParts = append(setParts, fmt.Sprintf("title=$%d", i))
 		args = append(args, *payload.Title)
@@ -167,11 +166,11 @@ func (p *PostStore) Update(ctx context.Context, payload payload.UpdatePostPayloa
 	return &m, nil
 }
 
-func (p *PostStore) Delete(ctx context.Context, payload payload.DeletePostPayload) error {
+func (p *PostStore) Delete(ctx context.Context, payload string) error {
 
-	query := `DELETE FROM posts WHERE id = $1 AND user_id = $2;`
+	query := `DELETE FROM posts WHERE id = $1;`
 
-	result, err := p.db.ExecContext(ctx, query, payload.ID, payload.UserID)
+	result, err := p.db.ExecContext(ctx, query, payload)
 	if err != nil {
 		return err
 	}
@@ -186,4 +185,47 @@ func (p *PostStore) Delete(ctx context.Context, payload payload.DeletePostPayloa
 	}
 
 	return nil
+}
+
+func (p *PostStore) GetByIDWithMeta(ctx context.Context, payload string) (*model.PostWithMetadata, error) {
+	query := `
+				SELECT 
+					posts.id, 
+					posts.title, 
+					posts.content, 
+					posts.tags, 
+					posts.created_at, 
+					posts.updated_at,
+					users.username, 
+					users.avatar_url,
+					(SELECT COUNT(*) FROM comments WHERE comments.post_id = posts.id) AS comment_count
+				FROM posts 
+				JOIN users ON posts.user_id = users.id
+				WHERE posts.id = $1;
+				`
+
+	var m model.PostWithMetadata
+
+	err := p.db.QueryRowContext(ctx, query, payload).Scan(
+		&m.ID,
+		&m.Title,
+		&m.Content,
+		pq.Array(&m.Tags),
+		&m.CreatedAt,
+		&m.UpdatedAt,
+		&m.Username,
+		&m.UserAvatar,
+		&m.CommentCount,
+	)
+
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrorNotFound
+		default:
+			log.Println("DB Error: ", err)
+			return nil, ErrorInternal
+		}
+	}
+	return &m, nil
 }

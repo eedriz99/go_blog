@@ -17,8 +17,8 @@ type CommentResponse struct {
 }
 
 type CommentListResponse struct {
-	Comments []CommentResponse `json:"comments"`
-	Total    int               `json:"total"`
+	Data  []CommentResponse `json:"data"`
+	Total int               `json:"total"`
 }
 
 func NewCommentResponse(model *store.CommentWithUsername) CommentResponse {
@@ -34,12 +34,12 @@ func NewCommentResponse(model *store.CommentWithUsername) CommentResponse {
 
 func NewCommentListResponse(models []store.CommentWithUsername) CommentListResponse {
 	res := CommentListResponse{
-		Comments: make([]CommentResponse, len(models)),
-		Total:    len(models),
+		Data:  make([]CommentResponse, len(models)),
+		Total: len(models),
 	}
 
 	for i := range models {
-		res.Comments[i] = NewCommentResponse(&models[i])
+		res.Data[i] = NewCommentResponse(&models[i])
 	}
 	return res
 }

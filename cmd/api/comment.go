@@ -45,7 +45,7 @@ func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.
 	postId := chi.URLParam(r, "postID")
 	ctx := r.Context()
 
-	comments, err := app.store.Comments.GetByPost(ctx, postId)
+	comments, err := app.store.Comments.GetByPostID(ctx, postId)
 	if err != nil {
 		app.InternalServerError(w, r, err)
 		return
