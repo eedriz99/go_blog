@@ -33,6 +33,7 @@
 | Method | Path | Handler | File | Middleware |
 |--------|------|---------|------|------------|
 | `GET` | `/v1/users/{userID}` | `GetUserHandler` | `user.go` | `userContextMiddleware` |
+| `GET` | `/v1/users/{userID}/posts` | `getPostsByUserIDHandler` | `post.go` | `userContextMiddleware` |
 
 ---
 
@@ -42,7 +43,6 @@ These handlers exist in code but have no route wired up in `api.go`.
 
 | Handler | File | Notes |
 |---------|------|-------|
-| `getPostsHandler` | `post.go:26` | Returns a single post from context — likely superseded by `getPostWithCommentsHandler` |
 | `CreateUserHandler` | `user.go:13` | Empty stub — user registration not yet implemented |
 
 ---

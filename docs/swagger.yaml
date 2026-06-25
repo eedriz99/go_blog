@@ -68,6 +68,15 @@ definitions:
         description: optional field for response
         type: string
     type: object
+  response.PostListResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/response.PostResponse'
+        type: array
+      total:
+        type: integer
+    type: object
   response.PostResponse:
     properties:
       content:
@@ -104,6 +113,15 @@ definitions:
       title:
         type: string
       updated_at:
+        type: string
+    type: object
+  response.UserResponse:
+    properties:
+      id:
+        type: string
+      name:
+        type: string
+      username:
         type: string
     type: object
 host: localhost:8000
@@ -416,4 +434,60 @@ paths:
       summary: Create a comment
       tags:
       - comments
+  /users/{userID}:
+    get:
+      description: Returns a user by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.UserResponse'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get a user
+      tags:
+      - users
+  /users/{userID}/posts:
+    get:
+      description: Returns all posts belonging to a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: userID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.PostListResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get posts by user
+      tags:
+      - users
 swagger: "2.0"

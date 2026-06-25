@@ -15,14 +15,14 @@ type postKey string
 
 const postContextKey postKey = "post"
 
-// @Summary     Get a post
-// @Description Returns a single post from context
-// @Tags        posts
+// @Summary     Get posts by user
+// @Description Returns all posts belonging to a specific user
+// @Tags        users
 // @Produce     json
-// @Param       postID path string true "Post ID"
-// @Success     200 {object} response.PostResponse
-// @Failure     404 {object} map[string]string
-// @Router      /posts/{postID} [get]
+// @Param       userID path string true "User ID"
+// @Success     200 {object} response.PostListResponse
+// @Failure     500 {object} map[string]string
+// @Router      /users/{userID}/posts [get]
 func (app *application) getPostsByUserIDHandler(w http.ResponseWriter, r *http.Request) {
 	userID := getUserFromContext(r).ID
 	posts, err := app.store.Posts.GetByUserID(r.Context(), userID)
@@ -40,7 +40,7 @@ func (app *application) getPostsByUserIDHandler(w http.ResponseWriter, r *http.R
 // @Tags        posts
 // @Accept      json
 // @Produce     json
-// @Param       payload body dto.CreatePostPayload true "Post payload"
+// @Param       payload body payload.CreatePostPayload true "Post payload"
 // @Success     201 {object} response.PostResponse
 // @Failure     400 {object} map[string]string
 // @Failure     500 {object} map[string]string
@@ -106,7 +106,7 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 // @Accept      json
 // @Produce     json
 // @Param       postID  path   string                    true "Post ID"
-// @Param       payload body   dto.UpdatePostPayload     true "Update payload"
+// @Param       payload body   payload.UpdatePostPayload     true "Update payload"
 // @Success     200 {object} response.PostResponse
 // @Failure     400 {object} map[string]string
 // @Failure     500 {object} map[string]string
