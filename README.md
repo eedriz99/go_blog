@@ -31,6 +31,7 @@ GOBlog is a personal learning project — a social-style blogging API where user
 | Database | PostgreSQL |
 | DB Driver | `lib/pq` (via `database/sql`) |
 | Auth | JWT (middleware-based) |
+| API Docs | [Swagger / swaggo](https://github.com/swaggo/swag) |
 | Config | Environment variables |
 | Deployment | Docker / Docker Compose (planned) |
 
@@ -43,32 +44,38 @@ The is the expected project structure, but things are meant to change, especiall
 ```
 go_blog/
 ├── cmd/
-│   └── api/
-│       └── main.go          # Entry point — wire up server, router, DB
+│   ├── api/
+│   │   └── main.go          # Entry point — wire up server, router, DB
+│   └── seed/
+│       └── main.go          # Standalone DB seeder entrypoint
+├── docs/                    # Auto-generated Swagger docs (swag init)
+│   ├── docs.go
+│   ├── swagger.json
+│   └── swagger.yaml
+├── db/
+│   └── migrations/
+│       └── *.sql            # SQL migration files
 ├── internal/
-│   ├── auth/
-│   │   └── middleware.go    # JWT validation, UserID injection into context
-│   ├── handler/
-│   │   ├── post.go          # Post HTTP handlers
-│   │   ├── comment.go       # Comment HTTP handlers
-│   │   └── user.go          # User/auth HTTP handlers
+│   ├── db/
+│   │   ├── postgresdb.go    # DB connection setup
+│   │   └── seeder.go        # Seed data — users, posts, comments
 │   ├── store/
-│   │   ├── post.go          # Post DB queries (CreatePost, GetPost, etc.)
-│   │   ├── comment.go       # Comment DB queries (CreateComment, GetComments, etc.)
-│   │   └── user.go          # User DB queries
+│   │   ├── post.go          # Post DB queries
+│   │   ├── comment.go       # Comment DB queries
+│   │   ├── user.go          # User DB queries
+│   │   ├── storage.go       # Storage interface + NewStore
+│   │   └── mediator.go      # Shared store types (CommentWithUsername, etc.)
 │   ├── model/
 │   │   ├── post.go          # Post DB model struct
 │   │   ├── comment.go       # Comment DB model struct
 │   │   └── user.go          # User DB model struct
 │   └── dto/
 │       ├── payload/
-│       │   ├── post.go          # Request DTOs for posts
-│       │   └── comment.go       # Request DTOs for comments (UpdateCommentPayload, etc.)
+│       │   ├── post.go      # Request DTOs for posts
+│       │   └── comment.go   # Request DTOs for comments
 │       └── response/
-│           ├── post.go          # Response DTOs for posts
-│           └── comment.go       # Response DTOs for comments (CommentResponse, etc.)
-├── migrations/
-│   └── *.sql                # SQL migration files
+│           ├── post.go      # Response DTOs for posts
+│           └── comment.go   # Response DTOs for comments
 ├── go.mod
 ├── go.sum
 ├── migrate.sh
@@ -86,22 +93,27 @@ go_blog/
 
 | Method | Path | Description | Auth Required |
 |--------|------|-------------|:---:|
-| `GET` | `/api/v1/posts` | List all posts | ✗ |
-| `POST` | `/api/v1/posts` | Create a new post | ✓ |
-| `GET` | `/api/v1/posts/{postID}` | Get a single post | ✗ |
-| `PATCH` | `/api/v1/posts/{postID}` | Update a post | ✓ (owner) |
-| `DELETE` | `/api/v1/posts/{postID}` | Delete a post | ✓ (owner) |
+| `GET` | `/v1/posts` | List all posts | ✗ |
+| `POST` | `/v1/posts` | Create a new post | ✓ |
+| `GET` | `/v1/posts/{postID}` | Get post with comments | ✗ |
+| `PATCH` | `/v1/posts/{postID}` | Update a post | ✓ (owner) |
+| `DELETE` | `/v1/posts/{postID}` | Delete a post | ✓ (owner) |
 
 ### Comments
 
 | Method | Path | Description | Auth Required |
 |--------|------|-------------|:---:|
-| `GET` | `/api/v1/posts/{postID}/comments` | Get comments for a post | ✗ |
-| `POST` | `/api/v1/posts/{postID}/comments` | Add a comment to a post | ✓ |
-| `PUT` | `/api/v1/comments/{commentID}` | Update a comment | ✓ (owner) |
-| `DELETE` | `/api/v1/comments/{commentID}` | Delete a comment | ✓ (owner) |
+| `GET` | `/v1/posts/{postID}/comments` | Get comments for a post | ✗ |
+| `POST` | `/v1/posts/{postID}/comments` | Add a comment to a post | ✓ |
+| `PUT` | `/v1/comments/{commentID}` | Update a comment | ✓ (owner) |
+| `DELETE` | `/v1/comments/{commentID}` | Delete a comment | ✓ (owner) |
 
+### Other
 
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/v1/health` | Health check — returns status, env, version |
+| `GET` | `/swagger/*` | Swagger UI — interactive API documentation |
 
 ---
 
@@ -129,18 +141,25 @@ export PORT=8000
 ### 3. Run database migrations
 
 ```bash
-psql $DATABASE_URL -f migrations/001_create_users.sql
-psql $DATABASE_URL -f migrations/002_create_posts.sql
-psql $DATABASE_URL -f migrations/003_create_comments.sql
+./migrate.sh up
 ```
 
-### 4. Run the server
+### 4. (Optional) Seed the database
+
+```bash
+go run ./cmd/seed/
+```
+
+This inserts 100 users, ~160 posts, and ~480 comments using generated data.
+
+### 5. Run the server
 
 ```bash
 go run ./cmd/api
 ```
 
-The API will be available at `http://localhost:8080`.
+The API will be available at `http://localhost:8000`.
+Swagger UI: `http://localhost:8000/swagger/index.html`
 
 ---
 
@@ -153,8 +172,8 @@ CREATE TABLE IF NOT EXISTS users(
     email citext NOT NULL UNIQUE,
     username citext NOT NULL UNIQUE,
     first_name VARCHAR(255) NOT NULL,
-    last_name VARCHAR(255) NOT NULL
-    -- password   TEXT NOT NULL,            [bcrypt hashed]
+    last_name VARCHAR(255) NOT NULL,
+    password VARCHAR(255) NOT NULL
 );
 ```
 
@@ -213,6 +232,10 @@ These are patterns and pitfalls deliberately worked through during development �
 - [x] `dto` package — `CommentResponse` and related types separate from DB models
 - [x] Proper `database/sql` usage — `&field` for Scan, values for args
 - [x] Error handling — `sql.ErrNoRows` detection, appropriate HTTP status codes
+- [x] Health check endpoint — `GET /v1/health`
+- [x] Database seeder — `cmd/seed`, generates users, posts, and comments
+- [x] Swagger / OpenAPI docs — annotations on all handlers, UI at `/swagger/index.html`
+- [x] Password field — added to `users` table via migration
 
 ---
 
