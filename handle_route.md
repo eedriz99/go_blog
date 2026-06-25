@@ -1,19 +1,10 @@
 # Handlers & Routes
 
-Endpoints organised by **CRUD** — Create, Read, Update, Delete.
+Endpoints organised by HTTP method: **GET → POST → PATCH/PUT → DELETE**
 
 ---
 
-## Create
-
-| Method | Path | Handler | File | Middleware |
-|--------|------|---------|------|------------|
-| `POST` | `/v1/posts` | `createPostHandler` | `post.go` | — |
-| `POST` | `/v1/posts/{postID}/comments` | `createCommentHandler` | `comment.go` | `postContextMiddleware` |
-
----
-
-## Read
+## GET — Read
 
 | Method | Path | Handler | File | Middleware |
 |--------|------|---------|------|------------|
@@ -27,7 +18,16 @@ Endpoints organised by **CRUD** — Create, Read, Update, Delete.
 
 ---
 
-## Update
+## POST — Create
+
+| Method | Path | Handler | File | Middleware |
+|--------|------|---------|------|------------|
+| `POST` | `/v1/posts` | `createPostHandler` | `post.go` | — |
+| `POST` | `/v1/posts/{postID}/comments` | `createCommentHandler` | `comment.go` | `postContextMiddleware` |
+
+---
+
+## PATCH / PUT — Update
 
 | Method | Path | Handler | File | Middleware |
 |--------|------|---------|------|------------|
@@ -36,7 +36,7 @@ Endpoints organised by **CRUD** — Create, Read, Update, Delete.
 
 ---
 
-## Delete
+## DELETE — Delete
 
 | Method | Path | Handler | File | Middleware |
 |--------|------|---------|------|------------|
