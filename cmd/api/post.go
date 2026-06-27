@@ -15,8 +15,8 @@ type postKey string
 
 const postContextKey postKey = "post"
 
-// @Summary     Get posts by user
-// @Description Returns all posts belonging to a specific user
+// @Summary     Read posts by user
+// @Description Read all posts belonging to a specific user
 // @Tags        users
 // @Produce     json
 // @Param       userID path string true "User ID"
@@ -35,8 +35,8 @@ func (app *application) getPostsByUserIDHandler(w http.ResponseWriter, r *http.R
 
 }
 
-// @Summary     Create a post
-// @Description Creates a new blog post
+// @Summary     Create post
+// @Description Create a new blog post
 // @Tags        posts
 // @Accept      json
 // @Produce     json
@@ -73,8 +73,8 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 	}
 }
 
-// @Summary     List all posts
-// @Description Returns all blog posts
+// @Summary     Read all posts
+// @Description Read all blog posts
 // @Tags        posts
 // @Produce     json
 // @Success     200 {array}  response.PostResponse
@@ -100,8 +100,8 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 	writeJson(w, http.StatusOK, response)
 }
 
-// @Summary     Update a post
-// @Description Updates title, content, or tags of an existing post
+// @Summary     Update post
+// @Description Update title, content, or tags of an existing post
 // @Tags        posts
 // @Accept      json
 // @Produce     json
@@ -131,8 +131,8 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 	writeJson(w, http.StatusOK, response.NewPostResponse(post))
 }
 
-// @Summary     Delete a post
-// @Description Deletes a post by ID
+// @Summary     Delete post
+// @Description Delete a post by ID
 // @Tags        posts
 // @Produce     json
 // @Param       postID path string true "Post ID"
@@ -161,8 +161,8 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 	writeJson(w, http.StatusOK, []any{})
 }
 
-// @Summary     Get post with comments
-// @Description Returns a post and all its comments
+// @Summary     Read post with comments
+// @Description Read a post and all its comments
 // @Tags        posts
 // @Produce     json
 // @Param       postID path string true "Post ID"

@@ -14,8 +14,8 @@ func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request
 
 }
 
-// @Summary     Get a user
-// @Description Returns a user by ID
+// @Summary     Read user
+// @Description Read a user by ID
 // @Tags        users
 // @Produce     json
 // @Param       userID path string true "User ID"

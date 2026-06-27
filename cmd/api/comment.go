@@ -10,8 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-// @Summary     Create a comment
-// @Description Adds a comment to a post
+// @Summary     Create comment
+// @Description Create a comment on a post
 // @Tags        comments
 // @Accept      json
 // @Produce     json
@@ -52,8 +52,8 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 	}
 }
 
-// @Summary     Get comments for a post
-// @Description Returns all comments for a given post
+// @Summary     Read comments for a post
+// @Description Read all comments for a given post
 // @Tags        comments
 // @Produce     json
 // @Param       postID path string true "Post ID"
@@ -74,8 +74,8 @@ func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.
 	writeJson(w, http.StatusOK, res)
 }
 
-// @Summary     Update a comment
-// @Description Updates the content of a comment
+// @Summary     Update comment
+// @Description Update the content of a comment
 // @Tags        comments
 // @Accept      json
 // @Produce     json
@@ -106,8 +106,8 @@ func (app *application) updateCommentHandler(w http.ResponseWriter, r *http.Requ
 	writeJson(w, http.StatusOK, res)
 }
 
-// @Summary     Delete a comment
-// @Description Deletes a comment by ID
+// @Summary     Delete comment
+// @Description Delete a comment by ID
 // @Tags        comments
 // @Produce     json
 // @Param       commentID path string true "Comment ID"
