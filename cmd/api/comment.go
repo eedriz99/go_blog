@@ -10,6 +10,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
+const USERID = "cdf8c7d8-913c-4300-abee-b2165c541176"
+
 // @Summary     Create comment
 // @Description Create a comment on a post
 // @Tags        comments
@@ -22,10 +24,10 @@ import (
 // @Failure     500 {object} map[string]string
 // @Router      /posts/{postID}/comments [post]
 func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "postID")
+	postId := getpostFromContext(r).ID
 
 	var payload payload.CreateCommentPayload
-	if err := readJson(w, r, &payload); err != nil {
+	if err := readJSON(w, r, &payload); err != nil {
 		app.BadRequestError(w, r, err)
 		return
 	}
@@ -33,7 +35,7 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 	comment := &model.Comment{
 		Content: payload.Content,
 		PostID:  postId,
-		UserID:  "cdf8c7d8-913c-4300-abee-b2165c541176", // place holder. Get it from ctx
+		UserID:  USERID, // place holder. Get it from ctx
 	}
 
 	log.Printf("Comment: %v", comment)
@@ -46,7 +48,7 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 
 	res := response.NewCommentWithoutUsernameResponse(comment)
 
-	if err := writeJson(w, http.StatusCreated, res); err != nil {
+	if err := writeJSON(w, http.StatusCreated, res); err != nil {
 		app.InternalServerError(w, r, err)
 		return
 	}
@@ -61,7 +63,7 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 // @Failure     500 {object} map[string]string
 // @Router      /posts/{postID}/comments [get]
 func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.Request) {
-	postId := chi.URLParam(r, "postID")
+	postId := getpostFromContext(r).ID
 	ctx := r.Context()
 
 	comments, err := app.store.Comments.GetByPostID(ctx, postId)
@@ -71,7 +73,10 @@ func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.
 	}
 
 	res := response.NewCommentListResponse(comments)
-	writeJson(w, http.StatusOK, res)
+	if err := writeJSON(w, http.StatusOK, res); err != nil {
+		app.InternalServerError(w, r, err, "Unable to write Json")
+		return
+	}
 }
 
 // @Summary     Update comment
@@ -87,13 +92,13 @@ func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.
 // @Router      /comments/{commentID} [put]
 func (app *application) updateCommentHandler(w http.ResponseWriter, r *http.Request) {
 	var payload payload.UpdateCommentPayload
-	if err := readJson(w, r, &payload); err != nil {
+	if err := readJSON(w, r, &payload); err != nil {
 		app.BadRequestError(w, r, err)
 		return
 	}
 
 	payload.ID = chi.URLParam(r, "commentID")
-	payload.UserID = "cdf8c7d8-913c-4300-abee-b2165c541176" // place holder. Get it from ctx
+	payload.UserID = USERID // place holder. Get it from ctx
 
 	ctx := r.Context()
 	updatedComment, err := app.store.Comments.Update(ctx, payload)
@@ -103,7 +108,10 @@ func (app *application) updateCommentHandler(w http.ResponseWriter, r *http.Requ
 	}
 
 	res := response.NewCommentWithoutUsernameResponse(updatedComment)
-	writeJson(w, http.StatusOK, res)
+	if err := writeJSON(w, http.StatusOK, res); err != nil {
+		app.InternalServerError(w, r, err, "Unable to write Json")
+		return
+	}
 }
 
 // @Summary     Delete comment
@@ -120,7 +128,9 @@ func (app *application) deleteCommentHandler(w http.ResponseWriter, r *http.Requ
 	ctx := r.Context()
 
 	payload.ID = chi.URLParam(r, "commentID")
-	payload.UserID = "cdf8c7d8-913c-4300-abee-b2165c541176" // place holder. Get it from ctx
+
+	// TODO: Get user id from request
+	payload.UserID = USERID // place holder. Get it from ctx
 	log.Printf("Delete Payload: %v", payload)
 
 	if err := app.store.Comments.Delete(ctx, payload); err != nil {
@@ -128,5 +138,8 @@ func (app *application) deleteCommentHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	writeJson(w, http.StatusNoContent, nil)
+	if err := writeJSON(w, http.StatusNoContent, nil); err != nil {
+		app.InternalServerError(w, r, err, "Unable to write Json")
+		return
+	}
 }

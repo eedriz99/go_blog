@@ -53,7 +53,7 @@ go_blog/
 │   │   ├── health.go           # Health check handler
 │   │   ├── middleware.go       # postContextMiddleware, userContextMiddleware
 │   │   ├── errors.go           # Shared HTTP error helpers
-│   │   └── json.go             # readJson / writeJson / writeError helpers
+│   │   └── json.go             # readJSON / writeJSON / writeError helpers
 │   │
 │   └── seed/
 │       └── main.go             # Standalone DB seeder entrypoint
@@ -150,9 +150,9 @@ Chi Router (api.go)
     ▼
 Handler (cmd/api/*.go)
     │
-    ├── readJson()         → parse + validate request body
+    ├── readJSON()         → parse + validate request body
     ├── store.XXX.Method() → DB operation via store layer
-    └── writeJson()        → encode + send JSON response
+    └── writeJSON()        → encode + send JSON response
             │
             ▼
         Store (internal/store/*.go)
@@ -340,9 +340,9 @@ Applied to all `/v1/users/{userID}` sub-routes. Fetches the user from the DB usi
 ### `cmd/api/json.go`
 | Function | Purpose |
 |----------|---------|
-| `readJson(w, r, &dst)` | Decodes JSON body into `dst`; enforces 1MB limit and rejects unknown fields |
-| `writeJson(w, status, data)` | Encodes `data` as JSON with correct Content-Type header |
-| `writeError(w, status, msg)` | Wraps `msg` in `{ "error": "..." }` envelope and calls `writeJson` |
+| `readJSON(w, r, &dst)` | Decodes JSON body into `dst`; enforces 1MB limit and rejects unknown fields |
+| `writeJSON(w, status, data)` | Encodes `data` as JSON with correct Content-Type header |
+| `writeError(w, status, msg)` | Wraps `msg` in `{ "error": "..." }` envelope and calls `writeJSON` |
 
 ### `cmd/api/errors.go`
 | Function | HTTP Status |

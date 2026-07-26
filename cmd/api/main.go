@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -13,7 +12,7 @@ import (
 
 const version = "0.0.1"
 
-var BASE_URL = fmt.Sprintf("[::]:%s/v1", env.GetString("PORT", "8000"))
+// var BASE_URL = fmt.Sprintf("[::]:%s/v1", env.GetString("PORT", "8000"))
 
 // @title           Go Blog API
 // @version         1.0

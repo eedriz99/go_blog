@@ -17,12 +17,12 @@ func (app *application) healthCheckHandler(w http.ResponseWriter, r *http.Reques
 		"env":     app.config.env,
 		"version": version,
 	}
-	if err := writeJson(w, http.StatusOK, payload); err != nil {
+	if err := writeJSON(w, http.StatusOK, payload); err != nil {
 		err = writeError(w, http.StatusInternalServerError, err.Error())
 		if err != nil {
 			log.Println("Error writing response:", err.Error())
 		}
 		return
 	}
-	return
+
 }

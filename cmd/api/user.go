@@ -34,7 +34,7 @@ func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 	// create user and hash password
 	var payload payload.CreateUserPayload
-	err := readJson(w, r, &payload)
+	err := readJSON(w, r, &payload)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -79,7 +79,7 @@ func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request
 	// TODO: Email the activation token to the user registered Email
 
 	log.Printf("Token: %v\n", &token)
-	writeJson(w, http.StatusCreated, map[string]string{"message": "User created successfully"})
+	writeJSON(w, http.StatusCreated, map[string]string{"message": "User created successfully"})
 }
 
 // @Summary     Read user
@@ -93,7 +93,7 @@ func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request
 // @Router      /users/{userID} [get]
 func (app *application) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := getUserFromContext(r)
-	writeJson(w, http.StatusOK, response.NewUserResponse(user))
+	writeJSON(w, http.StatusOK, response.NewUserResponse(user))
 }
 
 // @Summary     Login
@@ -110,7 +110,7 @@ func (app *application) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 func (app *application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Get user credentials from request body
 	var payload payload.LoginPayload
-	err := readJson(w, r, &payload)
+	err := readJSON(w, r, &payload)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
@@ -138,7 +138,7 @@ func (app *application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: Reroute to home page if valid, otherwise return an error response
-	writeJson(w, http.StatusOK, "login successful")
+	writeJSON(w, http.StatusOK, "login successful")
 }
 
 // @Summary     Activate user
@@ -158,6 +158,6 @@ func (app *application) ActivateUserHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	writeJson(w, http.StatusAccepted, "Activated")
+	writeJSON(w, http.StatusAccepted, "Activated")
 
 }

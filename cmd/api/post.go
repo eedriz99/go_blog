@@ -31,7 +31,7 @@ func (app *application) getPostsByUserIDHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	writeJson(w, http.StatusOK, response.NewListPostResponse(posts))
+	writeJSON(w, http.StatusOK, response.NewListPostResponse(posts))
 
 }
 
@@ -49,7 +49,7 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 
 	var payload payload.CreatePostPayload
 
-	if err := readJson(w, r, &payload); err != nil {
+	if err := readJSON(w, r, &payload); err != nil {
 		app.BadRequestError(w, r, err)
 		return
 	}
@@ -67,7 +67,7 @@ func (app *application) createPostHandler(w http.ResponseWriter, r *http.Request
 	}
 
 	res := response.NewPostResponse(post)
-	if err := writeJson(w, http.StatusCreated, res); err != nil {
+	if err := writeJSON(w, http.StatusCreated, res); err != nil {
 		app.InternalServerError(w, r, err)
 		return
 	}
@@ -88,7 +88,7 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			writeJson(w, http.StatusOK, response.NewListPostResponse([]model.Post{}))
+			writeJSON(w, http.StatusOK, response.NewListPostResponse([]model.Post{}))
 			return
 		}
 		app.InternalServerError(w, r, err)
@@ -97,7 +97,7 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 
 	response := response.NewListPostResponse(posts)
 
-	writeJson(w, http.StatusOK, response)
+	writeJSON(w, http.StatusOK, response)
 }
 
 // @Summary     Update post
@@ -116,7 +116,7 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 	ctx := r.Context()
 	postCtx := getpostFromContext(r)
 
-	if err := readJson(w, r, &payload); err != nil {
+	if err := readJSON(w, r, &payload); err != nil {
 		app.BadRequestError(w, r, err)
 		return
 	}
@@ -128,7 +128,7 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 		app.InternalServerError(w, r, err)
 		return
 	}
-	writeJson(w, http.StatusOK, response.NewPostResponse(post))
+	writeJSON(w, http.StatusOK, response.NewPostResponse(post))
 }
 
 // @Summary     Delete post
@@ -158,7 +158,7 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	writeJson(w, http.StatusOK, []any{})
+	writeJSON(w, http.StatusOK, []any{})
 }
 
 // @Summary     Read post with comments
@@ -186,5 +186,5 @@ func (app *application) getPostWithCommentsHandler(w http.ResponseWriter, r *htt
 	}
 
 	res := response.NewPostWithCommentsResponse(response.NewPostResponse(post), comments)
-	writeJson(w, http.StatusOK, res)
+	writeJSON(w, http.StatusOK, res)
 }

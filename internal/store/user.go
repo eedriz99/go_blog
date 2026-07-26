@@ -9,7 +9,7 @@ import (
 
 	"github.com/eedriz99/go_blog/internal/dto/payload"
 	"github.com/eedriz99/go_blog/internal/model"
-	//"github.com/lib/pq"
+	// "github.com/lib/pq"
 )
 
 type UserStore struct {
