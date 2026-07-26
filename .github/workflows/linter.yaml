@@ -10,20 +10,18 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      statuses: write
-      pull-requests: write
       checks: write
+      pull-requests: read
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
-        with:
-          fetch-depth: 0
 
-      - name: Super-linter
-        uses: super-linter/super-linter@v8.7.0
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # GO_MODULES already runs golangci-lint module-aware; the standalone
-          # GO validator errors on this multi-package layout (cmd/api vs docs)
-          # regardless of code correctness.
-          VALIDATE_GO: false
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: latest
