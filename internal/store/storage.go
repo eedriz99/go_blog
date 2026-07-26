@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/eedriz99/go_blog/internal/dto/payload"
 	"github.com/eedriz99/go_blog/internal/model"
@@ -38,10 +39,13 @@ type Storage struct {
 	}
 
 	Users interface {
-		Create(context.Context, *model.User) error
+		CreateWithInvitation(context.Context, *model.User, time.Duration) (*string, error)
 		GetByID(context.Context, string) (*model.User, error)
-		Update(context.Context, *model.User) error
+		GetByEmail(context.Context, string) (*model.User, error)
+		ActivateByInvitationToken(context.Context, string) error
+		Update(context.Context, payload.UpdateUserPayload) error
 		Delete(context.Context, string) error
+		DeleteToken(context.Context, string) error
 	}
 
 	Comments interface {
@@ -59,4 +63,37 @@ func NewStore(db *sql.DB) Storage {
 		Users:    &UserStore{db},
 		Comments: &CommentStore{db},
 	}
+}
+
+func withTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) error) error {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+
+	if err := fn(tx); err != nil {
+		_ = tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+func withReturningTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) (*string, error)) (*string, error) {
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	result, err := fn(tx)
+	if err != nil {
+		_ = tx.Rollback()
+		return nil, err
+	}
+
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	return result, nil
 }

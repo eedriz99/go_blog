@@ -1,0 +1,14 @@
+
+# Build artifacts
+./bin/*
+
+# DB seeder
+./cmd/seeder/*
+./seed*
+
+# Workdlows
+.github/workflows/*
+
+# Irrelevant files
+*.idea
+.idea/*

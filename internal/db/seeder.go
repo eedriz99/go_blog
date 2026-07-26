@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/eedriz99/go_blog/internal/model"
 	"github.com/eedriz99/go_blog/internal/store"
@@ -15,7 +16,7 @@ func Seed(s store.Storage) error {
 
 	users := generateUsers(100)
 	for _, user := range users {
-		if err := s.Users.Create(ctx, user); err != nil {
+		if _, err := s.Users.CreateWithInvitation(ctx, user, time.Hour*2); err != nil {
 			return fmt.Errorf("failed to create user: %w", err)
 		}
 	}

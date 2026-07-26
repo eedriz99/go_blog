@@ -1,13 +1,27 @@
 #version: '3.8'
 
 services:
+  go_blog:
+    image: golang:tip-alpine3.23
+    container_name: go_blog
+    run:
+      - apk update
+      - apk upgrade
+
+    workinng_dir: /app
+    environment:
+      - PORT=${PORT:-8080}
+    command: sh -c "air -c .air.toml"
+
+    portts:
+      - "${PORT:-8080}:${PORT:-8080}"
   db:
     image: postgres:16.3
     container_name: postgres_db
     environment:
-      POSTGRES_DB: go_blog
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: adminpassword
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
     volumes:
       - db-data:/var/lib/postgresql/data

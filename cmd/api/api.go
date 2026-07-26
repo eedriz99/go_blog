@@ -20,6 +20,11 @@ type config struct {
 	addr string
 	db   dbConfig
 	env  string
+	mail mailConfig
+}
+
+type mailConfig struct {
+	expiry time.Duration
 }
 
 type dbConfig struct {
@@ -67,6 +72,11 @@ func (app *application) mount() http.Handler {
 			r.Use(app.userContextMiddleware)
 			r.Get("/", app.GetUserHandler)
 			r.Get("/posts", app.getPostsByUserIDHandler)
+		})
+		r.Route("/auth", func(r chi.Router) {
+			r.Post("/register", app.CreateUserHandler)
+			r.Post("/login", app.LoginHandler)
+			r.Post("/activate/{token}", app.ActivateUserHandler)
 		})
 	})
 	return r

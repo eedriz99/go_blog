@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -11,6 +12,8 @@ import (
 )
 
 const version = "0.0.1"
+
+var BASE_URL = fmt.Sprintf("[::]:%s/v1", env.GetString("PORT", "8000"))
 
 // @title           Go Blog API
 // @version         1.0
@@ -28,6 +31,9 @@ func main() {
 			maxIdleTime:  env.GetDuration("DB_MAX_IDLE_TIME", 30*time.Second),
 		},
 		env: env.GetString("ENV", "development"),
+		mail: mailConfig{
+			expiry: time.Hour * 10, // 10 hours activation window
+		},
 	}
 
 	db, err := db.New(cfg.db.addr, cfg.db.maxIdleConns, cfg.db.maxOpenConns, cfg.db.maxIdleTime)
