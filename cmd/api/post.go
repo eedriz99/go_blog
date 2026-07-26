@@ -91,7 +91,10 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			writeJSON(w, http.StatusOK, response.NewListPostResponse([]model.Post{}))
+			if err := writeJSON(w, http.StatusOK, response.NewListPostResponse([]model.Post{})); err != nil {
+				app.InternalServerError(w, r, err)
+				return
+			}
 			return
 		}
 		app.InternalServerError(w, r, err)
@@ -100,7 +103,10 @@ func (app *application) getAllPostsHandler(w http.ResponseWriter, r *http.Reques
 
 	response := response.NewListPostResponse(posts)
 
-	writeJSON(w, http.StatusOK, response)
+	if err := writeJSON(w, http.StatusOK, response); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
 
 // @Summary     Update post
@@ -131,7 +137,10 @@ func (app *application) updatePostHandler(w http.ResponseWriter, r *http.Request
 		app.InternalServerError(w, r, err)
 		return
 	}
-	writeJSON(w, http.StatusOK, response.NewPostResponse(post))
+	if err := writeJSON(w, http.StatusOK, response.NewPostResponse(post)); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
 
 // @Summary     Delete post
