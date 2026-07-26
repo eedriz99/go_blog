@@ -90,8 +90,8 @@ func withReturningTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) (*string,
 
 	result, err := fn(tx)
 	if err != nil {
-		if err := tx.Rollback(); err != nil {
-			return nil, err
+		if rbErr := tx.Rollback(); err != nil {
+			return nil, rbErr
 		}
 		return nil, err
 	}

@@ -79,7 +79,10 @@ func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request
 	// TODO: Email the activation token to the user registered Email
 
 	log.Printf("Token: %v\n", &token)
-	writeJSON(w, http.StatusCreated, map[string]string{"message": "User created successfully"})
+	if err := writeJSON(w, http.StatusCreated, map[string]string{"message": "User created successfully"}); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
 
 // @Summary     Read user
@@ -93,7 +96,10 @@ func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request
 // @Router      /users/{userID} [get]
 func (app *application) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	user := getUserFromContext(r)
-	writeJSON(w, http.StatusOK, response.NewUserResponse(user))
+	if err := writeJSON(w, http.StatusOK, response.NewUserResponse(user)); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
 
 // @Summary     Login
@@ -138,7 +144,10 @@ func (app *application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// TODO: Reroute to home page if valid, otherwise return an error response
-	writeJSON(w, http.StatusOK, "login successful")
+	if err := writeJSON(w, http.StatusOK, "login successful"); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
 
 // @Summary     Activate user
@@ -158,6 +167,9 @@ func (app *application) ActivateUserHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	writeJSON(w, http.StatusAccepted, "Activated")
+	if err := writeJSON(w, http.StatusAccepted, "Activated"); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 
 }

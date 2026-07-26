@@ -31,7 +31,10 @@ func (app *application) getPostsByUserIDHandler(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	writeJSON(w, http.StatusOK, response.NewListPostResponse(posts))
+	if err := writeJSON(w, http.StatusOK, response.NewListPostResponse(posts)); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 
 }
 
