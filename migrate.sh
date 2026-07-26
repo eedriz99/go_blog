@@ -29,7 +29,7 @@ case "$COMMAND" in
     migrate create -ext sql -dir $MIGRATIONS_DIR $NAME
 
     # Wrap the .down.sql with IF EXISTS automatically
-    DOWN_FILE=$(ls -t $MIGRATIONS_DIR/*$NAME.down.sql | head -1)
+    DOWN_FILE=$(find "$MIGRATIONS_DIR" -maxdepth 1 -name "*${NAME}.down.sql" | head -1)
     if [ -f "$DOWN_FILE" ]; then
       sed -i '1iDROP TABLE IF EXISTS;' "$DOWN_FILE"
     fi
@@ -38,30 +38,30 @@ case "$COMMAND" in
   
   up)
     # Handle dirty database automatically
-    STATUS=$(migrate -path $MIGRATIONS_DIR -database $DATABASE_URL version 2>&1)
+    STATUS=$(migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" version 2>&1)
     if [[ $STATUS == *"dirty"* ]]; then
       DIRTY_VERSION=$(echo $STATUS | grep -o '[0-9]\+')
       echo "Dirty database detected at version $DIRTY_VERSION. Forcing..."
-      migrate -path $MIGRATIONS_DIR -database $DATABASE_URL force $DIRTY_VERSION
+      migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" force "$DIRTY_VERSION"
     fi
 
     if [ -n "$STEPS" ]; then
-      migrate -path $MIGRATIONS_DIR -database $DATABASE_URL up $STEPS
+      migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" up "$STEPS"
     else
-      migrate -path $MIGRATIONS_DIR -database $DATABASE_URL up
+      migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" up
     fi
     ;;
 
   down)
     if [ -n "$STEPS" ]; then
-      migrate -path $MIGRATIONS_DIR -database $DATABASE_URL down $STEPS
+      migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" down "$STEPS"
     else
-      migrate -path $MIGRATIONS_DIR -database $DATABASE_URL down
+      migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" down
     fi
     ;;
 
   status)
-    migrate -path $MIGRATIONS_DIR -database $DATABASE_URL version
+    migrate -path $MIGRATIONS_DIR -database "$DATABASE_URL" version
     ;;
 
   *)
