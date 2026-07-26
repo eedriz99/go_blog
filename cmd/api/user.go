@@ -18,6 +18,17 @@ type userKey string
 
 const userContextKey userKey = "user"
 
+// @Summary     Register user
+// @Description Create a new user account and send an activation invitation
+// @Tags        auth
+// @Accept      json
+// @Produce     json
+// @Param       payload body payload.CreateUserPayload true "User registration payload"
+// @Success     201 {object} map[string]string
+// @Failure     400 {object} map[string]string
+// @Failure     409 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /auth/register [post]
 func (app *application) CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	ctx := r.Context()
@@ -85,6 +96,17 @@ func (app *application) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	writeJson(w, http.StatusOK, response.NewUserResponse(user))
 }
 
+// @Summary     Login
+// @Description Authenticate a user with email and password
+// @Tags        auth
+// @Accept      json
+// @Produce     json
+// @Param       payload body payload.LoginPayload true "Login payload"
+// @Success     200 {object} map[string]string
+// @Failure     400 {object} map[string]string
+// @Failure     401 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /auth/login [post]
 func (app *application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	// Get user credentials from request body
 	var payload payload.LoginPayload
@@ -119,6 +141,14 @@ func (app *application) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	writeJson(w, http.StatusOK, "login successful")
 }
 
+// @Summary     Activate user
+// @Description Activate a user account using its invitation token
+// @Tags        auth
+// @Produce     json
+// @Param       token path string true "Invitation token"
+// @Success     202 {object} map[string]string
+// @Failure     500 {object} map[string]string
+// @Router      /auth/activate/{token} [post]
 func (app *application) ActivateUserHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	token := chi.URLParam(r, "token")
