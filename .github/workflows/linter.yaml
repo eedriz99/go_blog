@@ -25,3 +25,8 @@ jobs:
         uses: golangci/golangci-lint-action@v6
         with:
           version: latest
+          # Build from source with the Go toolchain from setup-go instead of
+          # fetching a pre-built binary; the latest pre-built release is
+          # compiled with an older Go than this repo's go.mod version and
+          # refuses to type-check it.
+          install-mode: goinstall

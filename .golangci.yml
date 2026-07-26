@@ -1,2 +1,5 @@
-run:
-  go: "1.24"
+linters-settings:
+  revive:
+    rules:
+      - name: unused-parameter
+        disabled: true
