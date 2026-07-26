@@ -14,3 +14,5 @@ jobs:
 
       - name: Super-linter
         uses: super-linter/super-linter@v8.7.0
+        with:
+          fetch-depth: 0
