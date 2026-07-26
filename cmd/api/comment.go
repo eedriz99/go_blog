@@ -24,7 +24,7 @@ const USERID = "cdf8c7d8-913c-4300-abee-b2165c541176"
 // @Failure     500 {object} map[string]string
 // @Router      /posts/{postID}/comments [post]
 func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Request) {
-	postId := getpostFromContext(r).ID
+	postID := getpostFromContext(r).ID
 
 	var payload payload.CreateCommentPayload
 	if err := readJSON(w, r, &payload); err != nil {
@@ -34,7 +34,7 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 
 	comment := &model.Comment{
 		Content: payload.Content,
-		PostID:  postId,
+		PostID:  postID,
 		UserID:  USERID, // place holder. Get it from ctx
 	}
 
@@ -63,10 +63,10 @@ func (app *application) createCommentHandler(w http.ResponseWriter, r *http.Requ
 // @Failure     500 {object} map[string]string
 // @Router      /posts/{postID}/comments [get]
 func (app *application) getCommentsByPostHandler(w http.ResponseWriter, r *http.Request) {
-	postId := getpostFromContext(r).ID
+	postID := getpostFromContext(r).ID
 	ctx := r.Context()
 
-	comments, err := app.store.Comments.GetByPostID(ctx, postId)
+	comments, err := app.store.Comments.GetByPostID(ctx, postID)
 	if err != nil {
 		app.InternalServerError(w, r, err)
 		return

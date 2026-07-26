@@ -8,7 +8,7 @@ import (
 	"database/sql"
 	"testing"
 
-	_ "github.com/lib/pq"
+	_ "github.com/lib/pq" // for mocking postgres db tag handling
 
 	"github.com/eedriz99/go_blog/internal/env"
 )

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"log"
 	"time"
 
 	"github.com/eedriz99/go_blog/internal/dto/payload"
@@ -72,7 +73,9 @@ func withTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) error) error {
 	}
 
 	if err := fn(tx); err != nil {
-		_ = tx.Rollback()
+		if rbErr := tx.Rollback(); rbErr != nil {
+			log.Printf("rollback failed: %v", rbErr)
+		}
 		return err
 	}
 
@@ -87,7 +90,9 @@ func withReturningTx(ctx context.Context, db *sql.DB, fn func(*sql.Tx) (*string,
 
 	result, err := fn(tx)
 	if err != nil {
-		_ = tx.Rollback()
+		if err := tx.Rollback(); err != nil {
+			return nil, err
+		}
 		return nil, err
 	}
 
