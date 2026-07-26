@@ -170,7 +170,10 @@ func (app *application) deletePostHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-	writeJSON(w, http.StatusOK, []any{})
+	if err := writeJSON(w, http.StatusOK, []any{}); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
 
 // @Summary     Read post with comments
@@ -198,5 +201,8 @@ func (app *application) getPostWithCommentsHandler(w http.ResponseWriter, r *htt
 	}
 
 	res := response.NewPostWithCommentsResponse(response.NewPostResponse(post), comments)
-	writeJSON(w, http.StatusOK, res)
+	if err := writeJSON(w, http.StatusOK, res); err != nil {
+		app.InternalServerError(w, r, err)
+		return
+	}
 }
