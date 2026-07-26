@@ -97,6 +97,9 @@ func (c *CommentStore) Update(ctx context.Context, comment payload.UpdateComment
 func (c *CommentStore) Delete(ctx context.Context, payload payload.DeleteCommentPayload) error {
 	query := `DELETE FROM comments WHERE id = $1 AND user_id = $2;`
 	result, err := c.db.ExecContext(ctx, query, payload.ID, payload.UserID)
+	if err != nil {
+		return err
+	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
@@ -107,7 +110,7 @@ func (c *CommentStore) Delete(ctx context.Context, payload payload.DeleteComment
 		return ErrorNotFound
 	}
 
-	return err
+	return nil
 }
 
 func (c *CommentStore) GetByUser(ctx context.Context, userID string) ([]model.Comment, error) {

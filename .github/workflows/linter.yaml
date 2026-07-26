@@ -23,3 +23,7 @@ jobs:
         uses: super-linter/super-linter@v8.7.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GO_MODULES already runs golangci-lint module-aware; the standalone
+          # GO validator errors on this multi-package layout (cmd/api vs docs)
+          # regardless of code correctness.
+          VALIDATE_GO: false
