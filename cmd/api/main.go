@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -12,6 +13,8 @@ import (
 
 const version = "0.0.1"
 
+var PORT = fmt.Sprintf(":%v", env.GetString("PORT", "8080"))
+
 // var BASE_URL = fmt.Sprintf("[::]:%s/v1", env.GetString("PORT", "8000"))
 
 // @title           Go Blog API
@@ -22,7 +25,7 @@ const version = "0.0.1"
 // @BasePath        /v1
 func main() {
 	cfg := config{
-		addr: env.GetString("PORT", ":8000"),
+		addr: PORT,
 		db: dbConfig{
 			addr:         env.GetString("DB_ADDR", "postgres://admin:adminpassword@localhost/go_blog?sslmode=disable"),
 			maxIdleConns: env.GetInt("DB_MAX_IDLE_CONNS", 30),

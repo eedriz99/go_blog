@@ -1,32 +1,45 @@
 #version: '3.8'
 
 services:
-  go_blog:
-    image: golang:tip-alpine3.23
-    container_name: go_blog
-    run:
-      - apk update
-      - apk upgrade
+  api:
+    container_name: goblog-api
+    build:
+      context: .
+      dockerfile: Dockerfile.goblog
+    image: goblog-api:1.0.0
+     
 
-    workinng_dir: /app
     environment:
       - PORT=${PORT:-8080}
-    command: sh -c "air -c .air.toml"
+      - DB_ADDR=postgres://${POSTGRES_USER:-admin}:${POSTGRES_PASSWORD:-adminpassword}@db:5432/${POSTGRES_DB:-go_blog}?sslmode=disable
 
-    portts:
+    depends_on:
+      db:
+        condition: service_healthy
+
+    ports:
       - "${PORT:-8080}:${PORT:-8080}"
+
   db:
     image: postgres:16.3
     container_name: postgres_db
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-go_blog}
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-adminpassword}
 
     volumes:
       - db-data:/var/lib/postgresql/data
       # - ./scripts:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-go_blog}"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  # nginx:
+  #   container_name: nginx
 volumes:
   db-data:
